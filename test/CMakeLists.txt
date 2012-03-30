@@ -1,0 +1,6 @@
+set(TEST_FILES
+	testLexer.t)
+
+# install
+set(TEST_INSTALL_DIR ${INSTALL_DIR}/test)
+install(FILES ${TEST_FILES} DESTINATION ${TEST_INSTALL_DIR})
