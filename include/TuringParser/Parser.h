@@ -27,9 +27,13 @@ namespace TuringParser {
         public:
             //! \param precedence the binding power of the operator
             //! \param isRight Is the operator right associative?
-            BinaryOp(int precedence, bool isRight);
+            BinaryOp(ASTNode::Token type,int precedence, bool isRight);
             virtual ASTNode *parse(Parser *parser, ASTNode *left, Token token);
             virtual int getPrecedence();
+        private:
+            ASTNode::Token Type;
+            int Precedence;
+            bool IsRight;
         };
     }
 	//! Implements a general recursive descent parser
@@ -38,12 +42,9 @@ namespace TuringParser {
     public:
         Parser(Lexer lex);
         virtual ASTNode *parse();
-    protected:
-        //! registers a parselet for an operator
-        //! \param tok  the token that identifies the operator.
-        //!             I.E the - token for unary minus.
-        void registerOp(Token::ID tok, Parselet::PrefixOp *parselet);
-        void registerOp(Token::ID tok, Parselet::InfixOp *parselet);
+        
+        // Called from parselets ----
+        // TODO maybe use the friend system to avoid making these public
         //! get the nth token in the lookahead buffer
         Token lookahead(int n);
         Token curTok();
@@ -51,10 +52,14 @@ namespace TuringParser {
         //! \returns the token that was consumed
         Token consume();
         void match(Token::ID i);
-        
-        // PARSING
         //! Pratt expression parser using the registered parselets
         ASTNode *parseExpression(int precedence = 0);
+    protected:
+        //! registers a parselet for an operator
+        //! \param tok  the token that identifies the operator.
+        //!             I.E the - token for unary minus.
+        void registerOp(Token::ID tok, Parselet::PrefixOp *parselet);
+        void registerOp(Token::ID tok, Parselet::InfixOp *parselet);
     private:
         //! Helper to get precedence of current operator
         int getPrecedence();

@@ -28,7 +28,8 @@ int main(int argc, char** argv)
             tok = lex.nextToken();
             std::cout << tok.Begin.getLine() << "," <<
             tok.Begin.getColumn() << " - " <<
-            Token::getTokenName(tok.Type) << "(" << tok.String << ")" << std::endl;
+            Token::getTokenName(tok.Type) << "(" << tok.String << ")" <<
+            " [" << Token::getHumanTokenName(tok.Type) << "]" << std::endl;
         } while (tok.Type != Token::EOF_TKN);
     } catch (ParseError err) {
         std::cerr   << "Lexer error on line " << err.Begin.getLine() << 

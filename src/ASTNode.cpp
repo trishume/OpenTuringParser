@@ -15,13 +15,13 @@ namespace TuringParser {
     }
 
     // get the line number of the node (or try to derive it from the child node)
-    ASTNode::ASTNode(ASTNode::Token tok, int line) : root(tok) , Line(line) {}
+    ASTNode::ASTNode(ASTNode::Token tok, SourceLoc loc) : root(tok) , Loc(loc) {}
 
     //! deep copy constructor
     ASTNode::ASTNode(ASTNode *other) {
         root = other->root;
         str = other->str;
-        setLine(other->getLine());
+        Loc = other->getLoc();
         
         // recursively copy children
         for(NodeList::iterator it = other->children.begin(), e = other->children.end(); it < e; ++it) {
@@ -36,18 +36,6 @@ namespace TuringParser {
             children.pop_back();
         }
     }
-
-    int ASTNode::getLine() {
-        if ( Line != 0 )
-            return Line;
-        if( children.size() != 0 )
-            return children[0]->getLine();
-        return 0;
-    }
-    void ASTNode::setLine(int line) {
-        Line = line;
-    }
-
     void ASTNode::addChild(ASTNode *child) {
         children.push_back(child);
     }

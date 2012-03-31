@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+#include "TuringParser/SourceLoc.h"
+
 namespace TuringParser {
 class ASTNode {
 public:
@@ -14,13 +16,12 @@ public:
 #undef AST_TOKEN
     };
 
-    ASTNode(Token tok, int line = 0);
+    ASTNode(Token tok, SourceLoc loc);
     ASTNode(ASTNode *other);
     ~ASTNode();
     static const char *getTokenName(Token t);
 
-    int getLine();
-    void setLine(int line);
+    SourceLoc getLoc() { return Loc;}
     
     std::string stringTree(int indent = 0);
     
@@ -32,7 +33,7 @@ public:
     std::vector<ASTNode*> children; // sub node
     
 private:
-    int Line;
+    SourceLoc Loc;
     std::string FileName;
 };
 }

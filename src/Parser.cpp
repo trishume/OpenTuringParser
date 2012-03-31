@@ -5,6 +5,22 @@
 #include "TuringParser/ParseError.h"
 
 namespace TuringParser {
+    namespace Parselet {
+        BinaryOp::BinaryOp(ASTNode::Token type, int precedence, bool isRight) : Type(type), 
+        Precedence(precedence), IsRight(isRight) {
+            
+        }
+        ASTNode *BinaryOp::parse(Parser *parser, ASTNode *left, Token token) {
+            ASTNode *node = new ASTNode(Type,token.Begin);
+            node->addChild(left);
+            node->addChild(parser->parseExpression()); // right
+            return node;
+        }
+        int BinaryOp::getPrecedence() {
+            return Precedence;
+        }
+    }
+    
     Parser::Parser(Lexer lex) : Lex(lex), Pos(0) {
         
     }
