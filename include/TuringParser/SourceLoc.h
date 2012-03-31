@@ -9,6 +9,10 @@ namespace TuringParser {
 		bool isValid() {return Index >= 0;}
 		unsigned int getLine();
         unsigned int getColumn();
+        SourceLoc advance(int chars) {
+            return SourceLoc(File,Index+chars);
+        }
+                             
 		
 		int Index;
         SourceFile *File;

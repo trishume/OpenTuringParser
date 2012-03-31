@@ -8,6 +8,5 @@ namespace TuringParser {
     }
     unsigned int SourceLoc::getColumn() {
         return File->getColumn(Index);
-    }
-	
+    } 
 }

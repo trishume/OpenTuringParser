@@ -153,7 +153,7 @@ namespace TuringParser {
             os << "Expected '" << x << "'; found '" << C << "'";
             SourceLoc begin(Input,Pos);
             SourceLoc end(Input,Pos+1);
-            ParseError err(SourceLoc(Input,Pos),os.str());
+            ParseError err(begin,os.str());
             err.setEnd(end);
             err.setHint(FixItHint::CreateReplacement(SourceRange(begin,end),
                                                      std::string(1,x)));

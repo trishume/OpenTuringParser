@@ -12,6 +12,8 @@ namespace TuringParser {
     // Parselets for the Pratt expression parser
     class Parser;
     namespace Parselet {
+        //! Parselet for prefix operations and, confusingly, primary expressions
+        //! An identifier is a prefix expression
         class PrefixOp {
         public:
             virtual ASTNode *parse(Parser *parser, Token token) = 0;
@@ -35,25 +37,36 @@ namespace TuringParser {
 	class Parser {
     public:
         Parser(Lexer lex);
-        ASTNode *parse();
+        virtual ASTNode *parse();
     protected:
         //! registers a parselet for an operator
         //! \param tok  the token that identifies the operator.
         //!             I.E the - token for unary minus.
-        void registerOp(Token tok, Parselet::PrefixOp *parselet);
-        void registerOp(Token tok, Parselet::InfixOp *parselet);
+        void registerOp(Token::ID tok, Parselet::PrefixOp *parselet);
+        void registerOp(Token::ID tok, Parselet::InfixOp *parselet);
         //! get the nth token in the lookahead buffer
         Token lookahead(int n);
+        Token curTok();
         //! move the buffer forward by one token
-        void consume();
+        //! \returns the token that was consumed
+        Token consume();
+        void match(Token::ID i);
+        
+        // PARSING
+        //! Pratt expression parser using the registered parselets
+        ASTNode *parseExpression(int precedence = 0);
     private:
+        //! Helper to get precedence of current operator
+        int getPrecedence();
+        
+        Lexer Lex;
         //! The lookahead buffer
         std::vector<Token> Lookahead;
         //! Current index into the lookahead buffer
         unsigned int Pos;
         //! Storage for operators
-        std::map<Token, Parselet::PrefixOp*> PrefixOps;
-        std::map<Token, Parselet::InfixOp*> InfixOps;
+        std::map<Token::ID, Parselet::PrefixOp*> PrefixOps;
+        std::map<Token::ID, Parselet::InfixOp*> InfixOps;
 	};
 }
 

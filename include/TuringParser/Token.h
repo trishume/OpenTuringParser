@@ -11,18 +11,24 @@ namespace TuringParser {
     public:
         enum ID {
             EOF_TKN = 0
-#define TURING_TKN(x) ,x
+#define TURING_TKN(x,h) ,x
 #include "TuringParser/LexerTokens.h"
 #undef TURING_TKN
         };
-        Token() : Id(Token::EOF_TKN), String("") {}
-		Token(Token::ID i, std::string str) : Id(i), String(str) {}
-        Token::ID Id;
+        Token() : Type(Token::EOF_TKN), String("") {}
+		Token(Token::ID i, std::string str) : Type(i), String(str) {}
+        Token::ID Type;
 		SourceLoc Begin;
 		std::string String;
         
+        SourceLoc getEnd() {
+            return Begin.advance(String.size());
+        }
+        
         //! \returns the name of a token. Or <UNKNOWN> for a bogus id.
         static const char *getTokenName(Token::ID i);
+        //! Get the human english name of the token for example "+ operator"
+        static const char *getHumanTokenName(Token::ID i);
 	};
 }
 
