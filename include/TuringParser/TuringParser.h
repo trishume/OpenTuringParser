@@ -10,7 +10,7 @@ namespace TuringParser {
     namespace Precedence {
         //! Precedence levels from weakest to strongest binding
         enum Levels {
-            ASSIGNMENT = 1,
+            ASSIGN = 1,
             IMPLIES,
             OR,
             AND,
@@ -41,6 +41,15 @@ namespace TuringParser {
         class PrimaryParselet : public PrefixOp {
         public:
             explicit PrimaryParselet(ASTNode::Token type) : Type(type) {}
+            virtual ASTNode *parse(Parser *parser, Token token);
+        private:
+            ASTNode::Token Type;
+        };
+        // works for string AND character literals
+        class StringLiteralParselet : public PrefixOp {
+        public:
+            explicit StringLiteralParselet(ASTNode::Token type) : 
+            Type(type) {}
             virtual ASTNode *parse(Parser *parser, Token token);
         private:
             ASTNode::Token Type;

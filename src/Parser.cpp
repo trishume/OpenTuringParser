@@ -76,7 +76,8 @@ namespace TuringParser {
         
         if (PrefixOps.find(token.Type) == PrefixOps.end()) {
             std::ostringstream os;
-            os << "Could not parse \"" << token.String << "\"";
+            os << "Unexpected" << Token::getHumanTokenName(token.Type) <<
+                ": \"" << token.String << "\"";
             ParseError err(curTok().Begin,os.str());
             err.setEnd(curTok().getEnd());
             throw err;

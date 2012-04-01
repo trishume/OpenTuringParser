@@ -40,7 +40,7 @@ void testLexer(std::string fileName) {
 
 int main(int argc, char** argv) 
 {        
-    SourceFile *f = new SourceFile("6*7 + 4 - variable div lol**6.0");
+    SourceFile *f = new SourceFile("6*7 + 4 - variable div lol**6.0 and true or false");
     Lexer lex(f);
     TuringFileParser parser(lex);
     
