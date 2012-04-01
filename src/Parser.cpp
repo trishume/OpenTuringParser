@@ -1,19 +1,27 @@
 #include "TuringParser/Parser.h"
 
 #include <cassert>
+#include <iostream>
 
 #include "TuringParser/ParseError.h"
 
 namespace TuringParser {
     namespace Parselet {
-        BinaryOp::BinaryOp(ASTNode::Token type, int precedence, bool isRight) : Type(type), 
-        Precedence(precedence), IsRight(isRight) {
-            
+        UnaryOp::UnaryOp(ASTNode::Token type) : Type(type) {}
+        ASTNode *UnaryOp::parse(TuringParser::Parser *parser, TuringParser::Token token) {
+            ASTNode *node = new ASTNode(Type,token.Begin);
+            node->str = token.String;
+            node->addChild(parser->parseExpression()); // parse operand
+            return node;
         }
+        BinaryOp::BinaryOp(ASTNode::Token type, int precedence, bool isRight) : Type(type), 
+        Precedence(precedence), IsRight(isRight) {}
         ASTNode *BinaryOp::parse(Parser *parser, ASTNode *left, Token token) {
             ASTNode *node = new ASTNode(Type,token.Begin);
+            node->str = token.String;
             node->addChild(left);
-            node->addChild(parser->parseExpression()); // right
+            // right-assocative operators need to call it with 1 lower precedence
+            node->addChild(parser->parseExpression(IsRight ? Precedence - 1 : Precedence));
             return node;
         }
         int BinaryOp::getPrecedence() {
@@ -78,6 +86,7 @@ namespace TuringParser {
         
         ASTNode *left = prefix->parse(this, token);
         
+        //std::cout << "OPERATOR:" << Token::getTokenName(curTok().Type) << std::endl;
         while (precedence < getPrecedence()) {
             token = consume();
             

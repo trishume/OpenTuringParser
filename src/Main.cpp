@@ -5,6 +5,7 @@
 #include "TuringParser/File.h"
 #include "TuringParser/Lexer.h"
 #include "TuringParser/ParseError.h"
+#include "TuringParser/TuringParser.h"
 
 using namespace TuringParser;
 
@@ -17,9 +18,8 @@ std::string getFileContents(const std::string &filePath) {
     return "";
 }
 
-int main(int argc, char** argv) 
-{        
-    SourceFile *f = new SourceFile(getFileContents(argv[1]));
+void testLexer(std::string fileName) {
+    SourceFile *f = new SourceFile(getFileContents(fileName));
     Lexer lex(f);
     Token tok;
     
@@ -33,11 +33,25 @@ int main(int argc, char** argv)
         } while (tok.Type != Token::EOF_TKN);
     } catch (ParseError err) {
         std::cerr   << "Lexer error on line " << err.Begin.getLine() << 
-                    " column " << err.Begin.getColumn() << ": " <<
-                    err.getMessage() << std::endl;
+        " column " << err.Begin.getColumn() << ": " <<
+        err.getMessage() << std::endl;
     }
+}
+
+int main(int argc, char** argv) 
+{        
+    SourceFile *f = new SourceFile("6*7 + 4 - variable div lol**6.0");
+    Lexer lex(f);
+    TuringFileParser parser(lex);
     
-    
+    try {
+        ASTNode *root = parser.parseExpression();
+        std::cout << "PARSED:\n" << root->stringTree() << std::endl;
+    } catch (ParseError err) {
+        std::cerr   << "Parser error on line " << err.Begin.getLine() << 
+        " column " << err.Begin.getColumn() << ": " <<
+        err.getMessage() << std::endl;
+    }
     
     return 0;
 }

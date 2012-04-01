@@ -15,7 +15,7 @@ namespace TuringParser {
     }
 
     // get the line number of the node (or try to derive it from the child node)
-    ASTNode::ASTNode(ASTNode::Token tok, SourceLoc loc) : root(tok) , Loc(loc) {}
+    ASTNode::ASTNode(ASTNode::Token tok, SourceLoc loc, std::string string) : root(tok), str(string), Loc(loc) {}
 
     //! deep copy constructor
     ASTNode::ASTNode(ASTNode *other) {

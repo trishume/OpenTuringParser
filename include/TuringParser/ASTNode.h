@@ -16,7 +16,7 @@ public:
 #undef AST_TOKEN
     };
 
-    ASTNode(Token tok, SourceLoc loc);
+    ASTNode(Token tok, SourceLoc loc, std::string string = "");
     ASTNode(ASTNode *other);
     ~ASTNode();
     static const char *getTokenName(Token t);

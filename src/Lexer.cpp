@@ -23,8 +23,12 @@ namespace TuringParser {
         Keywords["div"] = Token::OP_DIV;
         Keywords["mod"] = Token::OP_MOD;
         Keywords["rem"] = Token::OP_REM;
+        Keywords["shl"] = Token::OP_SHL;
+        Keywords["shr"] = Token::OP_SHR;
+        Keywords["xor"] = Token::OP_XOR;
         Keywords["or"] = Token::OP_OR;
         Keywords["and"] = Token::OP_AND;
+        Keywords["in"] = Token::OP_IN;
         
         // general
         KEYWORD(addressint,ADDRESSINT);
@@ -70,7 +74,6 @@ namespace TuringParser {
         KEYWORD(if,IF);
         KEYWORD(implement,IMPLEMENT);
         KEYWORD(import,IMPORT);
-        KEYWORD(in,IN);
         KEYWORD(include,INCLUDE);
         KEYWORD(inherit,INHERIT);
         KEYWORD(init,INIT);
@@ -109,8 +112,6 @@ namespace TuringParser {
         KEYWORD(seek,SEEK);
         KEYWORD(self,SELF);
         KEYWORD(set,SET);
-        KEYWORD(shl,SHL);
-        KEYWORD(shr,SHR);
         KEYWORD(signal,SIGNAL);
         KEYWORD(skip,SKIP);
         KEYWORD(string,STRING);
@@ -128,7 +129,6 @@ namespace TuringParser {
         KEYWORD(wait,WAIT);
         KEYWORD(when,WHEN);
         KEYWORD(write,WRITE);
-        KEYWORD(xor,XOR);
     }
     void Lexer::consume() {
         ++Pos;

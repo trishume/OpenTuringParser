@@ -23,6 +23,13 @@ namespace TuringParser {
             virtual ASTNode *parse(Parser *parser, ASTNode *left, Token token) = 0;
             virtual int getPrecedence() = 0;
         };
+        class UnaryOp : public PrefixOp {
+        public:
+            UnaryOp(ASTNode::Token type);
+            virtual ASTNode *parse(Parser *parser, Token token);
+        private:
+            ASTNode::Token Type;
+        };
         class BinaryOp : public InfixOp {
         public:
             //! \param precedence the binding power of the operator
@@ -40,7 +47,7 @@ namespace TuringParser {
     //! Uses a Pratt parser for expressions, because they're cool!
 	class Parser {
     public:
-        Parser(Lexer lex);
+        explicit Parser(Lexer lex);
         virtual ASTNode *parse();
         
         // Called from parselets ----
