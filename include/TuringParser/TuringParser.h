@@ -27,12 +27,15 @@ namespace TuringParser {
 	class TuringFileParser : public Parser {
     public:
         explicit TuringFileParser(Lexer lex);
+        ~TuringFileParser();
     private:
         // helpers that keep track of memory to be freed later
         void registerPrefixOp(Token::ID i, Parselet::PrefixOp *op);
         void registerInfixOp(Token::ID i, Parselet::InfixOp *op);
         // Kept so they can be freed later
-        std::set<void*> Parselets;
+        std::set<Parselet::PrefixOp*> PrefixParselets;
+        std::set<Parselet::InfixOp*> InfixParselets;
+
 	};
     namespace Parselet {
         class PrimaryParselet : public PrefixOp {

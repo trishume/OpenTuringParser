@@ -16,10 +16,12 @@ namespace TuringParser {
         //! An identifier is a prefix expression
         class PrefixOp {
         public:
+            virtual ~PrefixOp() {}
             virtual ASTNode *parse(Parser *parser, Token token) = 0;
         };
         class InfixOp {
         public:
+            virtual ~InfixOp() {}
             virtual ASTNode *parse(Parser *parser, ASTNode *left, Token token) = 0;
             virtual int getPrecedence() = 0;
         };

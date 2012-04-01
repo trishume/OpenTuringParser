@@ -30,12 +30,23 @@ namespace TuringParser {
         registerInfixOp(Token::OP_EXPONENT, op);
         
     }
+    TuringFileParser::~TuringFileParser() {
+        // Free all the parselets, we no longer need them
+        for (std::set<Parselet::PrefixOp*>::iterator it = PrefixParselets.begin(),
+             end = PrefixParselets.end(); it != end; ++it) {
+            //delete *it;
+        }
+        for (std::set<Parselet::InfixOp*>::iterator it = InfixParselets.begin(),
+             end = InfixParselets.end(); it != end; ++it) {
+            //delete *it;
+        }
+    }
     void TuringFileParser::registerPrefixOp(Token::ID i, Parselet::PrefixOp *op) {
-        Parselets.insert((void*)op); // keep it to be freed
+        PrefixParselets.insert(op); // keep it to be freed
         registerOp(i, op);
     }
     void TuringFileParser::registerInfixOp(Token::ID i, Parselet::InfixOp *op) {
-        Parselets.insert((void*)op); // keep it to be freed
+        InfixParselets.insert(op); // keep it to be freed
         registerOp(i, op);
     }
     namespace Parselet {
