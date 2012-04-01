@@ -1,11 +1,12 @@
 #include "TuringParser/TuringParser.h"
 
-namespace TuringParser {
-    TuringFileParser::TuringFileParser(Lexer lex) : Parser(lex) {
+namespace OTParser {
+    TuringParser::TuringParser(Lexer lex) : Parser(lex) {
         // -----------------------------------------------------------------
         // register all the prefix parselets: Unary operators and primaries
         // -----------------------------------------------------------------
         // primary expressions
+        registerPrefixOp(Token::BRACKET_O, new Parselet::GroupParselet());
         registerPrefixOp(Token::IDENTIFIER, new Parselet::PrimaryParselet(ASTNode::VAR_REFERENCE));
         registerPrefixOp(Token::INTLITERAL, new Parselet::PrimaryParselet(ASTNode::INT_LITERAL));
         registerPrefixOp(Token::REALLITERAL, new Parselet::PrimaryParselet(ASTNode::REAL_LITERAL));
@@ -59,7 +60,7 @@ namespace TuringParser {
         registerInfixOp(Token::OP_EXPONENT, op);
         
     }
-    TuringFileParser::~TuringFileParser() {
+    TuringParser::~TuringParser() {
         // Free all the parselets, we no longer need them
         for (std::set<Parselet::PrefixOp*>::iterator it = PrefixParselets.begin(),
              end = PrefixParselets.end(); it != end; ++it) {
@@ -70,11 +71,11 @@ namespace TuringParser {
             //delete *it;
         }
     }
-    void TuringFileParser::registerPrefixOp(Token::ID i, Parselet::PrefixOp *op) {
+    void TuringParser::registerPrefixOp(Token::ID i, Parselet::PrefixOp *op) {
         PrefixParselets.insert(op); // keep it to be freed
         registerOp(i, op);
     }
-    void TuringFileParser::registerInfixOp(Token::ID i, Parselet::InfixOp *op) {
+    void TuringParser::registerInfixOp(Token::ID i, Parselet::InfixOp *op) {
         InfixParselets.insert(op); // keep it to be freed
         registerOp(i, op);
     }
@@ -86,6 +87,11 @@ namespace TuringParser {
             // strip the opening and closing quotes
             return new ASTNode(Type,token.Begin,
                                token.String.substr(1,token.String.size()-2));
+        }
+        ASTNode *GroupParselet::parse(Parser *parser, Token token) {
+            ASTNode *node = parser->parseExpression();
+            parser->match(Token::BRACKET_C);
+            return node;
         }
     }
 }

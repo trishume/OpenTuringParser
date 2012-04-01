@@ -8,7 +8,7 @@
 #include "TuringParser/ASTNode.h"
 #include "TuringParser/Token.h"
 
-namespace TuringParser {
+namespace OTParser {
     // Parselets for the Pratt expression parser
     class Parser;
     namespace Parselet {

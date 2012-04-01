@@ -6,7 +6,7 @@
 
 #include "TuringParser/SourceLoc.h"
 
-namespace TuringParser {
+namespace OTParser {
 class ASTNode {
 public:
     enum Token {

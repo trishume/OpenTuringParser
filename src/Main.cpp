@@ -7,7 +7,7 @@
 #include "TuringParser/ParseError.h"
 #include "TuringParser/TuringParser.h"
 
-using namespace TuringParser;
+using namespace OTParser;
 
 std::string getFileContents(const std::string &filePath) {
     std::ifstream in(filePath.c_str(), std::ios::in | std::ios::binary);
@@ -40,17 +40,20 @@ void testLexer(std::string fileName) {
 
 int main(int argc, char** argv) 
 {        
-    SourceFile *f = new SourceFile("6*7 + 4 - variable div lol**6.0 and true or false");
+    SourceFile *f = new SourceFile("bob := (6*7 + 4 - 7 div 6**6.0 < 8 xor 5 and true or)");
     Lexer lex(f);
-    TuringFileParser parser(lex);
+    TuringParser parser(lex);
     
     try {
         ASTNode *root = parser.parseExpression();
         std::cout << "PARSED:\n" << root->stringTree() << std::endl;
     } catch (ParseError err) {
-        std::cerr   << "Parser error on line " << err.Begin.getLine() << 
-        " column " << err.Begin.getColumn() << ": " <<
-        err.getMessage() << std::endl;
+        std::cerr   << "Syntax error on line " << err.Begin.getLine() << 
+        " column " << err.Begin.getColumn();
+        if (err.End.isValid()) {
+            std::cerr << " to " << err.End.getColumn();
+        }
+        std::cerr << ": " << err.getMessage() << "\n";
     }
     
     return 0;

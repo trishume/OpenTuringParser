@@ -5,10 +5,10 @@
 
 #include "TuringParser/ParseError.h"
 
-namespace TuringParser {
+namespace OTParser {
     namespace Parselet {
         UnaryOp::UnaryOp(ASTNode::Token type) : Type(type) {}
-        ASTNode *UnaryOp::parse(TuringParser::Parser *parser, TuringParser::Token token) {
+        ASTNode *UnaryOp::parse(Parser *parser, Token token) {
             ASTNode *node = new ASTNode(Type,token.Begin);
             node->str = token.String;
             node->addChild(parser->parseExpression()); // parse operand
@@ -20,8 +20,21 @@ namespace TuringParser {
             ASTNode *node = new ASTNode(Type,token.Begin);
             node->str = token.String;
             node->addChild(left);
-            // right-assocative operators need to call it with 1 lower precedence
-            node->addChild(parser->parseExpression(IsRight ? Precedence - 1 : Precedence));
+            try {
+                // right-assocative operators need to call it with 1 lower precedence
+                node->addChild(parser->parseExpression(IsRight ? Precedence - 1 : Precedence));
+            } catch (ParseError err) {
+                if (err.getType() != ParseError::unexpected_token_in_expression) {
+                    throw err; // we are not interested in these
+                }
+                // if this type of error happens here it is likely that the user
+                // forgot the other side of an operator. Change the error to reflect that.
+                ParseError newErr(token.getEnd(),ParseError::possible_missing_op_rhs);
+                newErr.setEnd(err.End);
+                newErr << err.getMessage() << Token::getHumanTokenName(token.Type);
+                throw newErr;
+            }
+            
             return node;
         }
         int BinaryOp::getPrecedence() {
@@ -61,12 +74,11 @@ namespace TuringParser {
         if (i == curTok().Type) {
             consume();
         } else {
-            std::ostringstream os;
-            os << "Expected " << Token::getHumanTokenName(i) << "; found " << 
-                    Token::getHumanTokenName(lookahead(0).Type);
             SourceLoc begin = curTok().Begin;
             SourceLoc end = curTok().getEnd();
-            ParseError err(begin,os.str());
+            ParseError err(begin,ParseError::match_fail);
+            err <<  Token::getHumanTokenName(i) << 
+                    Token::getHumanTokenName(lookahead(0).Type);
             err.setEnd(end);
             throw err;
         }
@@ -75,10 +87,8 @@ namespace TuringParser {
         Token token = consume();
         
         if (PrefixOps.find(token.Type) == PrefixOps.end()) {
-            std::ostringstream os;
-            os << "Unexpected" << Token::getHumanTokenName(token.Type) <<
-                ": \"" << token.String << "\"";
-            ParseError err(curTok().Begin,os.str());
+            ParseError err(curTok().Begin,ParseError::unexpected_token_in_expression);
+            err << Token::getHumanTokenName(token.Type) << token.String; // args
             err.setEnd(curTok().getEnd());
             throw err;
 

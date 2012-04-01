@@ -6,7 +6,7 @@
 #include "TuringParser/Parser.h"
 #include "TuringParser/Lexer.h"
 
-namespace TuringParser {
+namespace OTParser {
     namespace Precedence {
         //! Precedence levels from weakest to strongest binding
         enum Levels {
@@ -24,10 +24,10 @@ namespace TuringParser {
         };
     }
 	//! A pratt Expression Parser for Turing
-	class TuringFileParser : public Parser {
+	class TuringParser : public Parser {
     public:
-        explicit TuringFileParser(Lexer lex);
-        ~TuringFileParser();
+        explicit TuringParser(Lexer lex);
+        ~TuringParser();
     private:
         // helpers that keep track of memory to be freed later
         void registerPrefixOp(Token::ID i, Parselet::PrefixOp *op);
@@ -53,6 +53,10 @@ namespace TuringParser {
             virtual ASTNode *parse(Parser *parser, Token token);
         private:
             ASTNode::Token Type;
+        };
+        //! parses bracketed expressions (expr)
+        class GroupParselet : public PrefixOp {
+            virtual ASTNode *parse(Parser *parser, Token token);
         };
     }
 }

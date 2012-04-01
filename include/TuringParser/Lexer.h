@@ -9,7 +9,7 @@
 #include "TuringParser/SourceLoc.h"
 #include "TuringParser/File.h"
 
-namespace TuringParser {
+namespace OTParser {
 	//! Hand-written lexer
 	class Lexer {
         public:

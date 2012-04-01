@@ -2,6 +2,7 @@ include_directories (. ${QUEX_PATH} ${MAIN_INCLUDE_DIR})
 
 set(ParserSources
 	File.cpp
+	ParseError.cpp
 	SourceLoc.cpp
 	ASTNode.cpp
 	Token.cpp
@@ -13,6 +14,7 @@ set(ParserSources
 
 set(ParserHeaders
 	${MAIN_INCLUDE_DIR}/TuringParser/ParseError.h
+	${MAIN_INCLUDE_DIR}/TuringParser/ParseErrors.h
 	${MAIN_INCLUDE_DIR}/TuringParser/File.h
 	${MAIN_INCLUDE_DIR}/TuringParser/SourceLoc.h
 	${MAIN_INCLUDE_DIR}/TuringParser/Token.h

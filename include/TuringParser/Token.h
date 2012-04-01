@@ -5,7 +5,7 @@
 
 #include "TuringParser/SourceLoc.h"
 
-namespace TuringParser {
+namespace OTParser {
 	//! Custom Token Class
 	class Token {
     public:

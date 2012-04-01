@@ -1,6 +1,6 @@
 #include "TuringParser/ASTNode.h"
 
-namespace TuringParser {
+namespace OTParser {
     
     typedef std::vector<ASTNode*> NodeList;
 

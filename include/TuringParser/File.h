@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace TuringParser {
+namespace OTParser {
 	//! Container of a file. Manages source locations
 	class SourceFile {
         public:

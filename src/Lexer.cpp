@@ -13,7 +13,7 @@
                                     }
 #define KEYWORD(k,tok) Keywords[#k] = Token::tok
 
-namespace TuringParser {
+namespace OTParser {
     Lexer::Lexer(SourceFile *file) : Input(file), Pos(0) {
         C = Input->Data[Pos];
         
@@ -149,11 +149,10 @@ namespace TuringParser {
         if (C == x) {
             consume();
         } else {
-            std::ostringstream os;
-            os << "Expected '" << x << "'; found '" << C << "'";
             SourceLoc begin(Input,Pos);
             SourceLoc end(Input,Pos+1);
-            ParseError err(begin,os.str());
+            ParseError err(begin,ParseError::lexer_match_fail);
+            err << x << C; // args
             err.setEnd(end);
             err.setHint(FixItHint::CreateReplacement(SourceRange(begin,end),
                                                      std::string(1,x)));
@@ -249,11 +248,10 @@ namespace TuringParser {
                     if (isLetter(C)) return identifier();
                     if (isDigit(C)) return numLiteral();
                     // don't recognize token
-                    std::ostringstream os;
-                    os << "Unexpected character: '" << C;
                     SourceLoc begin(Input,Pos);
                     SourceLoc end(Input,Pos+1);
-                    ParseError err(SourceLoc(Input,Pos),os.str());
+                    ParseError err(SourceLoc(Input,Pos),ParseError::lexer_unexpected_char);
+                    err << C; // arg
                     err.setEnd(end);
                     throw err;
                     break;

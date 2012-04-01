@@ -2,10 +2,11 @@
 #define _TuringParser_ParseError_H_
 
 #include <string>
+#include <vector>
 
 #include "TuringParser/SourceLoc.h"
 
-namespace TuringParser {
+namespace OTParser {
 	/* LICENSE NOTE: 
 		The FixItHint class is copied (with modifications) from the Clang compiler source.
 		It is released under the University of Illinois Open Source License.
@@ -87,19 +88,38 @@ namespace TuringParser {
 	};
 	//! Basic parser error struct
 	class ParseError {
-        public:
-		ParseError(SourceLoc loc,std::string errMsg) :  Begin(loc), Msg(errMsg) {}
-		std::string getMessage() {return Msg;}
-		FixItHint getHint() {return FixHint;}
+    public:
+    	enum ErrType {
+    		UNKNOWN // mostly exists so commas work
+#define PARSE_ERROR(id,err) ,id
+#include "TuringParser/ParseErrors.h"
+#undef PARSE_ERROR
+    	};
+		ParseError(SourceLoc loc,ErrType type) :  Begin(loc), Type(type) {}
+		//! Formats the error message from the components
+		std::string getMessage();
+		FixItHint getHint() const {return FixHint;}
+		ErrType getType() const {return Type;}
 		void setHint(FixItHint hint) {FixHint = hint;}
 		void setEnd(SourceLoc end) {End = end;}
+        
+        //! Stream operator to add a string arg
+        ParseError& operator<<(std::string arg);
+        ParseError& operator<<(int arg);
+        ParseError& operator<<(char arg);
         
         //! Location of the error. Must never be invalid.
 		SourceLoc Begin;
 		//! The end of the error range. may be invalid
 		SourceLoc End;
 	private:
-		std::string Msg;
+		//! gets the format for a specific error type. 
+		//! Components are referenced by %n starting at %0
+		static std::string getFormatForType(ErrType type);
+		//! The type of the error
+		ErrType Type; 
+		//! The formatting components to be inserted into the error string
+		std::vector<std::string> Args;
 		//! The FixItHint, if there is one. May be null. Use isNull to check.
 		FixItHint FixHint;
 	};

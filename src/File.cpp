@@ -1,7 +1,7 @@
 #include "TuringParser/File.h"
 
 #include <algorithm>
-namespace TuringParser {
+namespace OTParser {
     SourceFile::SourceFile(const std::string &data) : Data(data) {
         // build the line cache
         LineCache.push_back(0);

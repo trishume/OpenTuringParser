@@ -1,7 +1,7 @@
 #ifndef _TuringParser_SourceLoc_H_
 #define _TuringParser_SourceLoc_H_
 
-namespace TuringParser {
+namespace OTParser {
     class SourceFile;
 	struct SourceLoc {
 		SourceLoc() : Index(0) {}
@@ -12,7 +12,7 @@ namespace TuringParser {
         SourceLoc advance(int chars) {
             return SourceLoc(File,Index+chars);
         }
-                             
+
 		
 		int Index;
         SourceFile *File;

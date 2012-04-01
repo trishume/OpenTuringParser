@@ -2,11 +2,12 @@
 
 #include "TuringParser/File.h"
 
-namespace TuringParser {
+namespace OTParser {
     unsigned int SourceLoc::getLine() {
         return File->getLine(Index);
     }
     unsigned int SourceLoc::getColumn() {
         return File->getColumn(Index);
-    } 
+    }
+	
 }
