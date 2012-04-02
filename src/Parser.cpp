@@ -37,7 +37,7 @@ namespace OTParser {
             
             return node;
         }
-        int BinaryOp::getPrecedence() {
+        int BinaryOp::getPrecedence(Parser *parser) {
             return Precedence;
         }
     }
@@ -116,6 +116,6 @@ namespace OTParser {
         if (InfixOps.find(type) == InfixOps.end()) {
             return 0;
         }
-        return InfixOps[type]->getPrecedence();
+        return InfixOps[type]->getPrecedence(this);
     }
 }

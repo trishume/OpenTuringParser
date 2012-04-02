@@ -23,7 +23,7 @@ namespace OTParser {
         public:
             virtual ~InfixOp() {}
             virtual ASTNode *parse(Parser *parser, ASTNode *left, Token token) = 0;
-            virtual int getPrecedence() = 0;
+            virtual int getPrecedence(Parser *parser) = 0;
         };
         class UnaryOp : public PrefixOp {
         public:
@@ -38,7 +38,7 @@ namespace OTParser {
             //! \param isRight Is the operator right associative?
             BinaryOp(ASTNode::Token type,int precedence, bool isRight);
             virtual ASTNode *parse(Parser *parser, ASTNode *left, Token token);
-            virtual int getPrecedence();
+            virtual int getPrecedence(Parser *parser);
         private:
             ASTNode::Token Type;
             int Precedence;

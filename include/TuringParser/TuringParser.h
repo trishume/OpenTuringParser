@@ -10,8 +10,8 @@ namespace OTParser {
     namespace Precedence {
         //! Precedence levels from weakest to strongest binding
         enum Levels {
-            ASSIGN = 1,
-            IMPLIES,
+            //ASSIGN, // Assignment is not an operator
+            IMPLIES = 1,
             OR,
             AND,
             NOT,
@@ -56,8 +56,29 @@ namespace OTParser {
         };
         //! parses bracketed expressions (expr)
         class GroupParselet : public PrefixOp {
+        public:
             virtual ASTNode *parse(Parser *parser, Token token);
         };
+        //! parses bracketed call expressions expr(expr[,expr]*)
+        class CallParselet : public InfixOp {
+        public:
+            virtual ASTNode *parse(Parser *parser, ASTNode *left,
+                                   Token token);
+            virtual int getPrecedence(Parser *parser);
+        };
+        //! parses binary operators that can use the short assign
+        //! syntax. I.E +/+= div/div= shl/shl=
+        /*class PossibleAssignBinOp : public InfixOp {
+        public:
+            PossibleAssignBinOp(int precedence) : 
+                                Prec(precedence) {}
+            virtual ASTNode *parse(Parser *parser, ASTNode *left,
+                                   Token token);
+            virtual int getPrecedence(Parser *parser);
+        private:
+            bool isAssign(Parser *parser) const;
+            int Prec;
+        };*/
     }
 }
 

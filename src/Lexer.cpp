@@ -186,8 +186,10 @@ namespace OTParser {
                 case '[': consume(); return newToken(Token::SQUARE_BRACKET_O, "[");
                 case ']': consume(); return newToken(Token::SQUARE_BRACKET_C, "]");
                 case '^': consume(); return newToken(Token::OP_DEREF, "^");
+                
                 case '&': consume(); return newToken(Token::OP_AND, "&");
                 case '|': consume(); return newToken(Token::OP_OR, "|");
+                case '+': consume(); return newToken(Token::OP_PLUS,"+");
                     
                 case '*':
                     consume();
@@ -195,9 +197,6 @@ namespace OTParser {
                         case '*':
                             consume();
                             return newToken(Token::OP_EXPONENT, "**");
-                        case '=':
-                            consume();
-                            return newToken(Token::OP_ASSIGN_MULT, "*=");
                         default:
                             return newToken(Token::OP_MULT, "*");
                     }
@@ -206,20 +205,12 @@ namespace OTParser {
                         return numLiteral();
                     }
                     consume(); // if it is not a number we can consume the -
-                    if (C=='=') {
-                        consume();
-                        return newToken(Token::OP_ASSIGN_MINUS, "-=");
-                    } else {
-                        return newToken(Token::OP_MINUS, "-");
-                    }
+                    return newToken(Token::OP_MINUS, "-");
                 case '/':
                     consume();
                     switch (C) {
                         case '*':
                             skipBlockComment();
-                        case '=':
-                            consume();
-                            return newToken(Token::OP_ASSIGN_DIVIDE, "/=");
                         default:
                             return newToken(Token::OP_DIVIDE, "/");
                     }
@@ -236,7 +227,7 @@ namespace OTParser {
                     return newToken(Token::OP_DOT, ".");
                 // the macro expands in to a case statement for the first character
                 // which then checks for the second character.
-                DIGRAPH('+', "+", Token::OP_PLUS, '=', "+=", Token::OP_ASSIGN_PLUS)
+                
                 DIGRAPH(':', ":", Token::COLON, '=', ":=", Token::OP_ASSIGN)
                 DIGRAPH('=', "=", Token::OP_EQ, '=', "=>", Token::OP_IMPLIES)
                 DIGRAPH('<', "<", Token::OP_LT, '=', "<=", Token::OP_LE)

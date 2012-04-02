@@ -24,12 +24,6 @@ namespace OTParser {
         // register the infix parselets: Binary and postfix operators, calls
         // -----------------------------------------------------------------
         Parselet::InfixOp *op;
-        op = new Parselet::BinaryOp(ASTNode::ASSIGN_OP, Precedence::ASSIGN,false);
-        registerInfixOp(Token::OP_ASSIGN, op);
-        registerInfixOp(Token::OP_ASSIGN_DIVIDE, op);
-        registerInfixOp(Token::OP_ASSIGN_MINUS, op);
-        registerInfixOp(Token::OP_ASSIGN_MULT, op);
-        registerInfixOp(Token::OP_ASSIGN_PLUS, op);
         op = new Parselet::BinaryOp(ASTNode::BIN_OP, Precedence::OR,false);
         registerInfixOp(Token::OP_OR, op);
         op = new Parselet::BinaryOp(ASTNode::BIN_OP, Precedence::AND,false);
@@ -58,6 +52,8 @@ namespace OTParser {
         registerInfixOp(Token::OP_SHR, op);
         op = new Parselet::BinaryOp(ASTNode::BIN_OP, Precedence::MODIFIER,false);
         registerInfixOp(Token::OP_EXPONENT, op);
+        op = new Parselet::CallParselet();
+        registerInfixOp(Token::BRACKET_O, op);
         
     }
     TuringParser::~TuringParser() {
@@ -93,5 +89,39 @@ namespace OTParser {
             parser->match(Token::BRACKET_C);
             return node;
         }
+        ASTNode *CallParselet::parse(Parser *parser, ASTNode *left, Token token) {
+            ASTNode *node = new ASTNode(ASTNode::CALL,token.Begin);
+            node->addChild(left); // TODO check for callable expression?
+            // we may have no arguments, so check for an immediate )
+            if (parser->curTok().Type != Token::BRACKET_C) {
+                do {
+                    node->addChild(parser->parseExpression());
+                } while (parser->curTok().Type == Token::COMMA);
+            }
+            parser->match(Token::BRACKET_C);
+            return node;
+        }
+        int CallParselet::getPrecedence(Parser *parser) {
+            return Precedence::CALL;
+        }
+        /* Turing does not allow assignment as an expression but you can uncomment this and
+           use it if you want them.
+        ASTNode *PossibleAssignBinOp::parse(Parser *parser, ASTNode *left, Token token) {
+            bool assign = isAssign(parser);
+            if(assign) parser->consume(); // consume the =
+            ASTNode *node = new ASTNode(assign ? ASTNode::ASSIGN_OP : ASTNode::BIN_OP,token.Begin);
+            node->addChild(left); // TODO check for callable expression?
+            
+            // Assignment has different precedence. It is also right associative so subtract one
+            int precedence = assign ? Precedence::ASSIGN - 1 : Prec;
+            node->addChild(parser->parseExpression(precedence)); // right side
+            return node;
+        }
+        int PossibleAssignBinOp::getPrecedence(Parser *parser) {
+            return isAssign(parser) ? Precedence::ASSIGN : Prec;
+        }
+        bool PossibleAssignBinOp::isAssign(Parser *parser) const {
+            return parser->lookahead(0).Type == Token::OP_EQ;
+        }*/
     }
 }
