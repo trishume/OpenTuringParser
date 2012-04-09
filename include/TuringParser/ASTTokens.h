@@ -46,4 +46,5 @@ AST_TOKEN(BOOL_LITERAL) /* children: string: true or false */
 AST_TOKEN(CALL) /* children: assignableExpr arg* string: */
 AST_TOKEN(PTRDEREF) /* children: assignableExpr string: */
 AST_TOKEN(FIELD_REF_OP) /* children: lhs string: rhs */
+AST_TOKEN(POINTER_FIELD_REF_OP) /* children: lhs string: rhs */
 AST_TOKEN(VAR_REFERENCE) /* children: string: var name */

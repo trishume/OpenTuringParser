@@ -20,7 +20,8 @@ namespace OTParser {
             MULTIPLY, // *, /, div, mod, rem, shl, shr
             PREFIX,
             MODIFIER, // **, ^, #
-            CALL // calling is an operator
+            CALL, // calling is an operator
+            FIELDREF
         };
     }
 	//! A pratt Expression Parser for Turing
@@ -61,6 +62,14 @@ namespace OTParser {
         };
         //! parses bracketed call expressions expr(expr[,expr]*)
         class CallParselet : public InfixOp {
+        public:
+            virtual ASTNode *parse(Parser *parser, ASTNode *left,
+                                   Token token);
+            virtual int getPrecedence(Parser *parser);
+        };
+        //! parses field reference operators that only take
+        //! identifiers as right hand sides
+        class FieldRefParselet : public InfixOp {
         public:
             virtual ASTNode *parse(Parser *parser, ASTNode *left,
                                    Token token);

@@ -15,4 +15,8 @@ PARSE_ERROR(match_fail,"Expected %0; found %1.")
 // args: unexpected token human name, unexpected token string
 PARSE_ERROR(unexpected_token_in_expression,"Unexpected %0.")
 // args: previous error, operator token human name
-PARSE_ERROR(possible_missing_op_rhs,"%0 Perhaps the other side of the %1 is missing?")
+PARSE_ERROR(possible_missing_op_rhs,"%0 In right side of %1.")
+// args: 
+PARSE_ERROR(extra_comma_in_call,"Extra comma before the end of function call.")
+// args: human name of offending token
+PARSE_ERROR(no_identifier_in_field_ref,"%0 after field reference. Only identifiers can come after a field reference.")

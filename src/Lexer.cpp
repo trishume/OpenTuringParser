@@ -181,6 +181,8 @@ namespace OTParser {
                 case '\'': return stringOrCharLiteral(true);
                     
                 case ',': consume(); return newToken(Token::COMMA, ",");
+                case '#': consume(); return newToken(Token::HASH, "#");
+                case '!': consume(); return newToken(Token::EXCLAMATION, "!");
                 case '(': consume(); return newToken(Token::BRACKET_O, "(");
                 case ')': consume(); return newToken(Token::BRACKET_C, ")");
                 case '[': consume(); return newToken(Token::SQUARE_BRACKET_O, "[");
@@ -205,6 +207,10 @@ namespace OTParser {
                         return numLiteral();
                     }
                     consume(); // if it is not a number we can consume the -
+                    if (C == '>') {
+                        consume();
+                        return newToken(Token::OP_POINTER_FIELD_REF, "->");
+                    }
                     return newToken(Token::OP_MINUS, "-");
                 case '/':
                     consume();

@@ -24,6 +24,9 @@ namespace OTParser {
         SourceLoc getEnd() {
             return Begin.advance(String.size());
         }
+        SourceRange getRange() {
+            return SourceRange(Begin,getEnd());
+        }
         
         //! \returns the name of a token. Or <UNKNOWN> for a bogus id.
         static const char *getTokenName(Token::ID i);

@@ -1,5 +1,7 @@
 #include "TuringParser/TuringParser.h"
 
+#include "TuringParser/ParseError.h"
+
 namespace OTParser {
     TuringParser::TuringParser(Lexer lex) : Parser(lex) {
         // -----------------------------------------------------------------
@@ -19,7 +21,8 @@ namespace OTParser {
         // unary operators
         registerPrefixOp(Token::OP_MINUS, new Parselet::UnaryOp(ASTNode::UNARY_OP));
         registerPrefixOp(Token::OP_NOT, new Parselet::UnaryOp(ASTNode::UNARY_OP));
-        registerPrefixOp(Token::OP_DEREF, new Parselet::UnaryOp(ASTNode::UNARY_OP));
+        registerPrefixOp(Token::HASH, new Parselet::UnaryOp(ASTNode::UNARY_OP)); // type cheat operator
+        registerPrefixOp(Token::OP_DEREF, new Parselet::UnaryOp(ASTNode::PTRDEREF));
         // -----------------------------------------------------------------
         // register the infix parselets: Binary and postfix operators, calls
         // -----------------------------------------------------------------
@@ -54,6 +57,9 @@ namespace OTParser {
         registerInfixOp(Token::OP_EXPONENT, op);
         op = new Parselet::CallParselet();
         registerInfixOp(Token::BRACKET_O, op);
+        op = new Parselet::FieldRefParselet();
+        registerInfixOp(Token::OP_DOT, op);
+        registerInfixOp(Token::OP_POINTER_FIELD_REF, op);
         
     }
     TuringParser::~TuringParser() {
@@ -94,15 +100,51 @@ namespace OTParser {
             node->addChild(left); // TODO check for callable expression?
             // we may have no arguments, so check for an immediate )
             if (parser->curTok().Type != Token::BRACKET_C) {
-                do {
+                node->addChild(parser->parseExpression()); // first argument
+                while (parser->curTok().Type == Token::COMMA) { // other args
+                    parser->consume(); // consume comma
+                    // extra comma like fun(hi,bob,)
+                    if (parser->curTok().Type == Token::BRACKET_C) {
+                        Token comma = parser->curTok();
+                        ParseError err(comma.Begin,ParseError::extra_comma_in_call);
+                        err.setEnd(comma.getEnd());
+                        err.setHint(FixItHint::CreateRemoval(comma.getRange()));
+                        throw err;
+                    }
                     node->addChild(parser->parseExpression());
-                } while (parser->curTok().Type == Token::COMMA);
+                }
             }
             parser->match(Token::BRACKET_C);
             return node;
         }
         int CallParselet::getPrecedence(Parser *parser) {
             return Precedence::CALL;
+        }
+        ASTNode *FieldRefParselet::parse(Parser *parser, ASTNode *left, Token token) {
+            ASTNode *node = new ASTNode(ASTNode::FIELD_REF_OP,token.Begin);
+            bool isPointerRef = (token.Type == Token::OP_POINTER_FIELD_REF);
+            
+            // TODO check for field reffable LHS?
+            if (isPointerRef) { // cheat, h->b is equivelant to ^h.b
+                ASTNode *deref = new ASTNode(ASTNode::PTRDEREF,token.Begin);
+                deref->addChild(left);
+                node->addChild(deref);
+            } else {
+                node->addChild(left);
+            }
+            
+            Token tok = parser->consume();
+            if (tok.Type != Token::IDENTIFIER) {
+                ParseError err(tok.Begin,ParseError::no_identifier_in_field_ref);
+                err << Token::getHumanTokenName(tok.Type);
+                err.setEnd(tok.getEnd());
+                throw err;
+            }
+            node->str = tok.String; // field name
+            return node;
+        }
+        int FieldRefParselet::getPrecedence(OTParser::Parser *parser) {
+            return Precedence::FIELDREF;
         }
         /* Turing does not allow assignment as an expression but you can uncomment this and
            use it if you want them.
